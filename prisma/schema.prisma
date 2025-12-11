@@ -17,6 +17,8 @@ model User {
   registration_date DateTime?      @default(now()) @db.Timestamp(6)
   loan              loan[]
   subscription      subscription[]
+
+  @@index([surname, name])
 }
 
 model author {
@@ -27,6 +29,8 @@ model author {
   country_id Int?
   country    country?     @relation(fields: [country_id], references: [country_id], onUpdate: NoAction)
   bookauthor bookauthor[]
+
+  @@index([surname])
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -41,6 +45,8 @@ model book {
   bookauthor       bookauthor[]
   bookgenre        bookgenre[]
   loan             loan[]
+
+  @@index([name])
 }
 
 model bookauthor {
@@ -59,6 +65,8 @@ model bookgenre {
   genre    genre @relation(fields: [genre_id], references: [genre_id], onDelete: Cascade, onUpdate: NoAction)
 
   @@id([book_id, genre_id])
+
+  @@index([genre_id])
 }
 
 model country {
@@ -87,6 +95,8 @@ model loan {
   User            User          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
 
   @@id([loan_date, user_id, book_id])
+
+  @@index([user_id, status])
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -119,6 +129,8 @@ model subscription {
   loan            loan[]
   payment         payment[]
   User            User                @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id, status])
 }
 
 enum loan_status {
