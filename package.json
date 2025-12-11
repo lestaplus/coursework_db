@@ -11,6 +11,15 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^7.1.0",
+    "dotenv": "^17.2.3",
     "prisma": "^7.1.0"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
