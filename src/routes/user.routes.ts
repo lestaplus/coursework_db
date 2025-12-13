@@ -4,10 +4,13 @@ import { userController } from '../controllers/user.controller.js';
 const router = Router();
 
 router.post('/register', userController.register);
-router.get('/', userController.getAll);
-router.delete('/:id', userController.deleteUser);
-
 router.get('/analytics/revenue', userController.getAnalytics);
+
+router.get('/search', userController.getByEmail);
+
+router.get('/', userController.getAll);
+
 router.patch('/subscriptions/:id', userController.updateSubscription);
+router.delete('/:id', userController.deleteUser);
 
 export default router;
