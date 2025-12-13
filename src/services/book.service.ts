@@ -1,0 +1,74 @@
+import { prisma } from "../prisma.js";
+
+export class BookService {
+  async createBookWithRelations(data: {
+    name: string;
+    isbn: string;
+    publication_date?: string;
+    pages_count?: number;
+    publisher_id?: number;
+    author_ids: number[];
+    genre_ids: number[];
+  }) {
+    return await prisma.$transaction(async (tx) => {
+      const existingBook = await tx.book.findUnique({
+        where: { isbn: data.isbn },
+      });
+
+      if (existingBook) {
+        throw new Error(`Book with ISBN ${data.isbn} already exists`);
+      }
+
+      if (data.genre_ids && data.genre_ids.length > 0) {
+        const genreCount = await tx.genre.count({
+          where: { genre_id: { in: data.genre_ids } },
+        });
+
+        if (genreCount !== data.genre_ids.length) {
+          throw new Error("One or more provided genre IDs are invalid");
+        }
+      }
+
+      const newBook = await tx.book.create({
+        data: {
+          name: data.name,
+          isbn: data.isbn,
+          publication_date: data.publication_date
+            ? new Date(data.publication_date)
+            : null,
+          pages_count: data.pages_count,
+          publisher_id: data.publisher_id,
+        },
+      });
+
+      if (data.author_ids && data.author_ids.length > 0) {
+        await tx.bookauthor.createMany({
+          data: data.author_ids.map((id) => ({
+            book_id: newBook.book_id,
+            author_id: id,
+          })),
+        });
+      }
+
+      if (data.genre_ids && data.genre_ids.length > 0) {
+        await tx.bookgenre.createMany({
+          data: data.genre_ids.map((id) => ({
+            book_id: newBook.book_id,
+            genre_id: id,
+          })),
+        });
+      }
+
+      return await tx.book.findUnique({
+        where: { book_id: newBook.book_id },
+        include: {
+          bookauthor: { include: { author: true } },
+          bookgenre: { include: { genre: true } },
+          publisher: true,
+        },
+      });
+    });
+  }
+}
+
+export const bookService = new BookService();
