@@ -14,6 +14,7 @@ model User {
   password_hash     String         @db.VarChar(255)
   birth_date        DateTime?      @db.Date
   registration_date DateTime?      @default(now()) @db.Timestamp(6)
+  deleted_at        DateTime?
   loan              loan[]
   subscription      subscription[]
 
