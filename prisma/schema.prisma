@@ -84,6 +84,7 @@ model genre {
 }
 
 model loan {
+  loan_id         Int           @id @default(autoincrement())
   loan_date       DateTime      @default(now()) @db.Timestamp(6)
   user_id         Int
   book_id         Int
@@ -93,8 +94,6 @@ model loan {
   book            book          @relation(fields: [book_id], references: [book_id], onDelete: Cascade, onUpdate: NoAction)
   subscription    subscription? @relation(fields: [subscription_id], references: [subscription_id], onUpdate: NoAction)
   User            User          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([loan_date, user_id, book_id])
 
   @@index([user_id, status])
 }
