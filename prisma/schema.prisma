@@ -124,6 +124,7 @@ model subscription {
   user_id         Int
   start_date      DateTime            @db.Date
   end_date        DateTime            @db.Date
+  version         Int                 @default(0)
   type            subscription_type
   status          subscription_status
   loan            loan[]

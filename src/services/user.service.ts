@@ -1,11 +1,17 @@
-import { prisma } from '../prisma.js';
-import { subscription_type, subscription_status, payment_type, payment_status, Prisma } from '@prisma/client';
+import { prisma } from "../prisma.js";
+import {
+  subscription_type,
+  subscription_status,
+  payment_type,
+  payment_status,
+  Prisma,
+} from "@prisma/client";
 
 export class UserService {
-  async registerUserWithTrial(data: { 
-    name: string; 
-    surname: string; 
-    email: string; 
+  async registerUserWithTrial(data: {
+    name: string;
+    surname: string;
+    email: string;
     password_hash: string;
     birth_date: Date;
   }) {
@@ -51,11 +57,11 @@ export class UserService {
       });
 
       await tx.subscription.updateMany({
-        where: { 
+        where: {
           user_id: userId,
-          status: subscription_status.ACTIVE 
+          status: subscription_status.ACTIVE,
         },
-        data: { status: subscription_status.CANCELLED }
+        data: { status: subscription_status.CANCELLED },
       });
 
       return deletedUser;
@@ -78,8 +84,31 @@ export class UserService {
       where: { email },
       include: {
         subscription: true,
-      }
+      },
     });
+  }
+
+  async updateSubscriptionStatus(
+    subscriptionId: number,
+    newStatus: subscription_status,
+    currentVersion: number
+  ) {
+    const result = await prisma.subscription.updateMany({
+      where: {
+        subscription_id: subscriptionId,
+        version: currentVersion,
+      },
+      data: {
+        status: newStatus,
+        version: { increment: 1 },
+      },
+    });
+
+    if (result.count === 0) {
+      throw new Error("Data has been modified by another user");
+    }
+
+    return { message: "Status updated successfully" };
   }
 }
 
