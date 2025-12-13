@@ -637,6 +637,7 @@ async function main() {
     { model: "book", pk: "book_id" },
     { model: "subscription", pk: "subscription_id" },
     { model: "payment", pk: "payment_id" },
+    { model: "loan", pk: "loan_id"}
   ];
 
   for (const t of tables) {
