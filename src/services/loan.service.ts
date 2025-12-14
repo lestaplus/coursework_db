@@ -1,0 +1,34 @@
+import { prisma } from "../prisma.js";
+import { loan_status } from "@prisma/client";
+
+export class LoanService {
+  async returnBook(loanId: number) {
+    return await prisma.$transaction(async (tx) => {
+      const loan = await tx.loan.findUnique({
+        where: { loan_id: loanId },
+        include: { book: true },
+      });
+
+      if (!loan) {
+        throw new Error("Loan not found");
+      }
+
+      if (loan.status === loan_status.RETURNED) {
+        throw new Error(
+          `Loan for book "${loan.book.name}" is already returned`
+        );
+      }
+
+      const updatedLoan = await tx.loan.update({
+        where: { loan_id: loanId },
+        data: {
+          status: loan_status.RETURNED,
+        },
+      });
+
+      return updatedLoan;
+    });
+  }
+}
+
+export const loanService = new LoanService();
