@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { userService } from "../services/user.service.js";
+import { userService } from "../services/user.service";
 
 class UserController {
   async register(req: Request, res: Response) {

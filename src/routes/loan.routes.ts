@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loanController } from "../controllers/loan.controller.js";
+import { loanController } from "../controllers/loan.controller";
 
 const router = Router();
 

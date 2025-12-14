@@ -1,4 +1,4 @@
-import { prisma } from "../prisma.js";
+import { prisma } from "../prisma";
 import { loan_status } from "@prisma/client";
 
 export class LoanService {

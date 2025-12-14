@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { loanService } from "../services/loan.service.js";
+import { loanService } from "../services/loan.service";
 
 class LoanController {
   async returnBook(req: Request, res: Response) {

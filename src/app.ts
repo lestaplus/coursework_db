@@ -1,8 +1,8 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import userRoutes from "./routes/user.routes.js";
-import bookRoutes from "./routes/book.routes.js";
-import loanRoutes from "./routes/loan.routes.js";
+import userRoutes from "./routes/user.routes";
+import bookRoutes from "./routes/book.routes";
+import loanRoutes from "./routes/loan.routes";
 
 const app: Express = express();
 

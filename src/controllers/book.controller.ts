@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { bookService } from "../services/book.service.js";
+import { bookService } from "../services/book.service";
 
 class BookController {
   async createBook(req: Request, res: Response) {

@@ -1,4 +1,4 @@
-import { prisma } from "../prisma.js";
+import { prisma } from "../prisma";
 
 export class BookService {
   async createBookWithRelations(data: {
@@ -17,6 +17,10 @@ export class BookService {
 
       if (existingBook) {
         throw new Error(`Book with ISBN ${data.isbn} already exists`);
+      }
+
+      if (data.pages_count !== undefined && data.pages_count <= 0) {
+        throw new Error("Pages count is invalid: must be greater than 0");
       }
 
       if (data.genre_ids && data.genre_ids.length > 0) {
