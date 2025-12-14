@@ -29,6 +29,16 @@ export class LoanService {
       return updatedLoan;
     });
   }
+
+  async deleteExpiredLoans() {
+    const result = await prisma.loan.deleteMany({
+      where: {
+        status: loan_status.EXPIRED,
+      },
+    });
+
+    return { count: result.count };
+  }
 }
 
 export const loanService = new LoanService();

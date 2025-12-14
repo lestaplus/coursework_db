@@ -24,6 +24,19 @@ class LoanController {
       }
     }
   }
+
+  async deleteExpired(req: Request, res: Response) {
+    try {
+      const result = await loanService.deleteExpiredLoans();
+
+      res.json({
+        status: "success",
+        message: `Successfully deleted ${result.count} expired loans`,
+      });
+    } catch (error: any) {
+      res.status(500).json({ status: "error", message: error.message });
+    }
+  }
 }
 
 export const loanController = new LoanController();
