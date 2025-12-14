@@ -7,7 +7,7 @@ import {
   subscription_status,
   subscription_type,
 } from "@prisma/client";
-import { prisma } from '../src/prisma';
+import { prisma } from "../src/prisma";
 
 async function main() {
   console.log("Seeding...");
@@ -559,6 +559,7 @@ async function main() {
         book_id: 1,
         subscription_id: 1,
         status: loan_status.RETURNED,
+        loan_date: new Date("2024-10-01"),
         access_end_date: new Date("2024-10-15"),
       },
       {
@@ -566,6 +567,7 @@ async function main() {
         book_id: 2,
         subscription_id: 1,
         status: loan_status.ACTIVE,
+        loan_date: new Date("2024-11-01"),
         access_end_date: new Date("2024-12-04"),
       },
       {
@@ -573,6 +575,7 @@ async function main() {
         book_id: 3,
         subscription_id: 2,
         status: loan_status.ACTIVE,
+        loan_date: new Date("2024-11-01"),
         access_end_date: new Date("2024-11-15"),
       },
       {
@@ -580,6 +583,7 @@ async function main() {
         book_id: 5,
         subscription_id: 2,
         status: loan_status.ACTIVE,
+        loan_date: new Date("2024-11-01"),
         access_end_date: new Date("2024-11-19"),
       },
       {
@@ -587,6 +591,7 @@ async function main() {
         book_id: 4,
         subscription_id: 3,
         status: loan_status.RETURNED,
+        loan_date: new Date("2023-01-01"),
         access_end_date: new Date("2023-01-24"),
       },
       {
@@ -594,6 +599,7 @@ async function main() {
         book_id: 6,
         subscription_id: 4,
         status: loan_status.EXPIRED,
+        loan_date: new Date("2024-03-01"),
         access_end_date: new Date("2024-04-03"),
       },
       {
@@ -601,6 +607,7 @@ async function main() {
         book_id: 7,
         subscription_id: 6,
         status: loan_status.RETURNED,
+        loan_date: new Date("2024-05-01"),
         access_end_date: new Date("2024-05-24"),
       },
       {
@@ -608,6 +615,7 @@ async function main() {
         book_id: 10,
         subscription_id: 9,
         status: loan_status.RETURNED,
+        loan_date: new Date("2024-02-01"),
         access_end_date: new Date("2024-02-28"),
       },
       {
@@ -615,6 +623,7 @@ async function main() {
         book_id: 9,
         subscription_id: 10,
         status: loan_status.ACTIVE,
+        loan_date: new Date("2024-06-01"),
         access_end_date: new Date("2024-06-15"),
       },
       {
@@ -622,6 +631,7 @@ async function main() {
         book_id: 8,
         subscription_id: 8,
         status: loan_status.ACTIVE,
+        loan_date: new Date("2024-11-01"),
         access_end_date: new Date("2024-11-19"),
       },
     ],
@@ -637,7 +647,7 @@ async function main() {
     { model: "book", pk: "book_id" },
     { model: "subscription", pk: "subscription_id" },
     { model: "payment", pk: "payment_id" },
-    { model: "loan", pk: "loan_id"}
+    { model: "loan", pk: "loan_id" },
   ];
 
   for (const t of tables) {

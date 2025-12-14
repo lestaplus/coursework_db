@@ -33,7 +33,6 @@ model author {
   @@index([surname])
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model book {
   book_id          Int          @id @default(autoincrement())
   publisher_id     Int?
@@ -98,7 +97,6 @@ model loan {
   @@index([user_id, status])
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model payment {
   payment_id      Int            @id @default(autoincrement())
   subscription_id Int
