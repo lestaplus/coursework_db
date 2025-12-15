@@ -1,6 +1,33 @@
 import { prisma } from "../prisma";
 
 export class PaymentService {
+  async getAllPayments(page: number = 1, limit: number = 10, userId?: number) {
+    const skip = (page - 1) * limit;
+
+    const [payments, total] = await prisma.$transaction([
+      prisma.payment.findMany({
+        where: userId ? { subscription: { user_id: userId } } : {},
+        take: limit,
+        skip: skip,
+        orderBy: { payment_date: "desc" },
+        include: {
+          subscription: {
+            select: {
+              type: true,
+              User: { select: { email: true } },
+            },
+          },
+        },
+      }),
+      prisma.payment.count({ where: userId ? { subscription: { user_id: userId } } : {} }),
+    ]);
+
+    return {
+      data: payments,
+      meta: { total, page, last_page: Math.ceil(total / limit) },
+    };
+  }
+
   async getRevenueAnalytics() {
     const result = await prisma.$queryRaw`
       SELECT 
