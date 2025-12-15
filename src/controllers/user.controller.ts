@@ -39,34 +39,6 @@ class UserController {
     }
   }
 
-  async updateSubscription(req: Request, res: Response) {
-    try {
-      const subId = Number(req.params.id);
-      const { status, version } = req.body;
-
-      if (!status || version === undefined) {
-        res.status(400).json({ error: "Status and version are required" });
-        return;
-      }
-
-      await userService.updateSubscriptionStatus(
-        subId,
-        status,
-        Number(version)
-      );
-      res.json({ status: "success" });
-    } catch (error: any) {
-      if (error.message.includes("CONFLICT")) {
-        res.status(409).json({
-          status: "error",
-          message: "Optimistic Locking Conflict: Reload data",
-        });
-      } else {
-        res.status(500).json({ status: "error", message: error.message });
-      }
-    }
-  }
-
   async getAnalytics(req: Request, res: Response) {
     try {
       const data = await userService.getRevenueAnalytics();

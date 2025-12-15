@@ -88,29 +88,6 @@ export class UserService {
     });
   }
 
-  async updateSubscriptionStatus(
-    subscriptionId: number,
-    newStatus: subscription_status,
-    currentVersion: number
-  ) {
-    const result = await prisma.subscription.updateMany({
-      where: {
-        subscription_id: subscriptionId,
-        version: currentVersion,
-      },
-      data: {
-        status: newStatus,
-        version: { increment: 1 },
-      },
-    });
-
-    if (result.count === 0) {
-      throw new Error("CONFLICT: Data has been modified by another user");
-    }
-
-    return { message: "Status updated successfully" };
-  }
-
   async getRevenueAnalytics() {
     const result = await prisma.$queryRaw`
       SELECT 
