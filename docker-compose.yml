@@ -15,6 +15,20 @@ services:
     networks:
       - db-network
   
+  postgres_test:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: librarydb_test
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    networks:
+      - db-network
+
   pgadmin:
     image: dpage/pgadmin4
     restart: always
@@ -32,6 +46,8 @@ volumes:
   postgres_data:
     driver: local
   pgadmin_data:
+    driver: local
+  postgres_test_data:
     driver: local
 
 networks:
