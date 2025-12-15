@@ -39,16 +39,6 @@ class UserController {
     }
   }
 
-  async getAnalytics(req: Request, res: Response) {
-    try {
-      const data = await userService.getRevenueAnalytics();
-      res.json({ status: "success", data });
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ status: "error", message: error.message });
-    }
-  }
-
   async getByEmail(req: Request, res: Response) {
     try {
       const email = req.query.email as string;
