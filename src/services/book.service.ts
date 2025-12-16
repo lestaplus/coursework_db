@@ -10,7 +10,7 @@ export class BookService {
     author_ids: number[];
     genre_ids: number[];
   }) {
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: any) => {
       const existingBook = await tx.book.findUnique({
         where: { isbn: data.isbn },
       });

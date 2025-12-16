@@ -3,7 +3,7 @@ import { loan_status } from "@prisma/client";
 
 export class LoanService {
   async returnBook(loanId: number) {
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: any) => {
       const loan = await tx.loan.findUnique({
         where: { loan_id: loanId },
         include: { book: true },

@@ -1,8 +1,23 @@
 version: '3.9'
 
 services:
+  app:
+    build: .
+    container_name: library_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/librarydb?schema=public"
+      PORT: 3000
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
   postgres:
     image: postgres:17
+    container_name: library_db
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -13,24 +28,27 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - db-network
-  
+      - app-network
+
   postgres_test:
     image: postgres:17
-    restart: always
+    container_name: library_db_test_local
+    restart: no
+    profiles: ["test"]
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: librarydb_test
     ports:
       - "5433:5432"
-    volumes:
-      - postgres_test_data:/var/lib/postgresql/data
+    tmpfs:
+      - /var/lib/postgresql/data
     networks:
-      - db-network
+      - app-network
 
   pgadmin:
     image: dpage/pgadmin4
+    container_name: library_pgadmin
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@gmail.com
@@ -40,16 +58,14 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     networks:
-      - db-network
+      - app-network
 
 volumes:
   postgres_data:
     driver: local
   pgadmin_data:
     driver: local
-  postgres_test_data:
-    driver: local
 
 networks:
-  db-network:
+  app-network:
     driver: bridge

@@ -15,7 +15,7 @@ export class UserService {
     password_hash: string;
     birth_date: Date;
   }) {
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: any) => {
       const newUser = await tx.user.create({
         data: {
           name: data.name,
@@ -50,7 +50,7 @@ export class UserService {
   }
 
   async softDeleteUser(userId: number) {
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: any) => {
       const deletedUser = await tx.user.update({
         where: { user_id: userId },
         data: { deleted_at: new Date() },
