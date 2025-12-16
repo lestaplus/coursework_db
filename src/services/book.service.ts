@@ -73,6 +73,26 @@ export class BookService {
       });
     });
   }
+
+  async getBooksByGenre(genreId: number) {
+    return await prisma.book.findMany({
+      where: {
+        bookgenre: {
+          some: {
+            genre_id: genreId,
+          },
+        },
+      },
+      include: {
+        bookauthor: {
+          include: {
+            author: true,
+          },
+        },
+        publisher: true,
+      },
+    });
+  }
 }
 
 export const bookService = new BookService();

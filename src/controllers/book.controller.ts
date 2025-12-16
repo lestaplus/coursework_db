@@ -36,6 +36,22 @@ class BookController {
       }
     }
   }
+
+  async getByGenre(req: Request, res: Response) {
+    try {
+      const genreId = Number(req.params.id);
+
+      if (isNaN(genreId)) {
+        res.status(400).json({ status: "error", message: "Invalid genre ID" });
+        return;
+      }
+
+      const books = await bookService.getBooksByGenre(genreId);
+      res.json({ status: "success", data: books });
+    } catch (error: any) {
+      res.status(500).json({ status: "error", message: error.message });
+    }
+  }
 }
 
 export const bookController = new BookController();

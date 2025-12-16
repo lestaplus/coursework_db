@@ -37,6 +37,22 @@ class LoanController {
       res.status(500).json({ status: "error", message: error.message });
     }
   }
+
+  async getMyLoans(req: Request, res: Response) {
+    try {
+      const userId = Number(req.params.userId);
+
+      if (isNaN(userId)) {
+        res.status(400).json({ status: "error", message: "Invalid user ID" });
+        return;
+      }
+
+      const loans = await loanService.getUserActiveLoans(userId);
+      res.json({ status: "success", data: loans });
+    } catch (error: any) {
+      res.status(500).json({ status: "error", message: error.message });
+    }
+  }
 }
 
 export const loanController = new LoanController();

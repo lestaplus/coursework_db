@@ -39,6 +39,18 @@ export class LoanService {
 
     return { count: result.count };
   }
+
+  async getUserActiveLoans(userId: number) {
+    return await prisma.loan.findMany({
+      where: {
+        user_id: userId,
+        status: loan_status.ACTIVE,
+      },
+      include: {
+        book: true,
+      },
+    });
+  }
 }
 
 export const loanService = new LoanService();
