@@ -87,7 +87,6 @@ describe("Book Integration Tests", () => {
 
   describe("GET /api/books/genre/:id", () => {
     let genreId: number;
-    let bookId: number;
 
     beforeEach(async () => {
       const genre = await prisma.genre.create({
@@ -106,7 +105,6 @@ describe("Book Integration Tests", () => {
           },
         },
       });
-      bookId = book.book_id;
 
       await prisma.book.create({
         data: {
@@ -142,6 +140,93 @@ describe("Book Integration Tests", () => {
 
       expect(response.status).toBe(200);
       expect(response.body.data).toEqual([]);
+    });
+  });
+
+  describe("GET /api/books/popular", () => {
+    let user1Id: number;
+    let bookPopularId: number;
+    let bookAverageId: number;
+
+    beforeEach(async () => {
+      const user = await prisma.user.create({
+        data: {
+          name: "Reader",
+          surname: "One",
+          email: "reader@test.com",
+          password_hash: "hash",
+        },
+      });
+      user1Id = user.user_id;
+
+      const book1 = await prisma.book.create({
+        data: { name: "Harry Potter", isbn: "POP-1" },
+      });
+      bookPopularId = book1.book_id;
+
+      const book2 = await prisma.book.create({
+        data: { name: "Dune", isbn: "AVG-1" },
+      });
+      bookAverageId = book2.book_id;
+
+      const book3 = await prisma.book.create({
+        data: { name: "Unknown Book", isbn: "ZERO-1" },
+      });
+
+      await prisma.loan.createMany({
+        data: [
+          {
+            user_id: user1Id,
+            book_id: bookPopularId,
+            status: "RETURNED",
+            loan_date: new Date("2024-01-01"),
+            access_end_date: new Date("2024-01-10"),
+          },
+          {
+            user_id: user1Id,
+            book_id: bookPopularId,
+            status: "ACTIVE",
+            loan_date: new Date("2024-02-01"),
+            access_end_date: new Date("2024-02-10"),
+          },
+        ],
+      });
+
+      await prisma.loan.create({
+        data: {
+          user_id: user1Id,
+          book_id: bookAverageId,
+          status: "ACTIVE",
+          loan_date: new Date("2025-12-05"),
+          access_end_date: new Date("2026-01-05"),
+        },
+      });
+    });
+
+    it("should return books ranked by loan count desc", async () => {
+      const response = await request(app).get("/api/books/popular");
+
+      expect(response.status).toBe(200);
+      expect(response.body.status).toBe("success");
+      expect(response.body.data).toHaveLength(2);
+
+      const firstPlace = response.body.data[0];
+      expect(firstPlace.book_title).toBe("Harry Potter");
+      expect(firstPlace.loan_count).toBe(2);
+      expect(firstPlace.rank).toBe(1);
+
+      const secondPlace = response.body.data[1];
+      expect(secondPlace.book_title).toBe("Dune");
+      expect(secondPlace.loan_count).toBe(1);
+      expect(secondPlace.rank).toBe(2);
+    });
+
+    it("should respect the limit parameter", async () => {
+      const response = await request(app).get("/api/books/popular?limit=1");
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].book_title).toBe("Harry Potter");
     });
   });
 });
