@@ -90,6 +90,11 @@ export class BookService {
           },
         },
         publisher: true,
+        bookgenre: {
+          include: {
+            genre: true,
+          },
+        },
       },
     });
   }

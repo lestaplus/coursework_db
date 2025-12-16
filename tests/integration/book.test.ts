@@ -84,4 +84,64 @@ describe("Book Integration Tests", () => {
       expect(response.status).toBe(400);
     });
   });
+
+  describe("GET /api/books/genre/:id", () => {
+    let genreId: number;
+    let bookId: number;
+
+    beforeEach(async () => {
+      const genre = await prisma.genre.create({
+        data: { name: "Sci-Fi" },
+      });
+      genreId = genre.genre_id;
+
+      const book = await prisma.book.create({
+        data: {
+          name: "Dune",
+          isbn: "DUNE-123",
+          bookgenre: {
+            create: {
+              genre_id: genreId,
+            },
+          },
+        },
+      });
+      bookId = book.book_id;
+
+      await prisma.book.create({
+        data: {
+          name: "Romance Book",
+          isbn: "LOVE-123",
+          bookgenre: {
+            create: {
+              genre: { create: { name: "Romance" } },
+            },
+          },
+        },
+      });
+    });
+
+    it("should return books only for the specific genre", async () => {
+      const response = await request(app).get(`/api/books/genre/${genreId}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.status).toBe("success");
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].name).toBe("Dune");
+      expect(response.body.data[0].bookgenre[0].genre.name).toBe("Sci-Fi");
+    });
+
+    it("should return empty array if genre has no books", async () => {
+      const emptyGenre = await prisma.genre.create({
+        data: { name: "Empty Genre" },
+      });
+
+      const response = await request(app).get(
+        `/api/books/genre/${emptyGenre.genre_id}`
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toEqual([]);
+    });
+  });
 });

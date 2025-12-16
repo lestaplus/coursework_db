@@ -105,4 +105,46 @@ describe("Loan Integration Tests", () => {
       expect(countAfter).toBe(0);
     });
   });
+
+  describe("GET /api/loans/user/:userId", () => {
+    beforeEach(async () => {
+      await prisma.loan.create({
+        data: {
+          user_id: userId,
+          book_id: bookId,
+          status: loan_status.ACTIVE,
+          loan_date: new Date("2025-12-01"),
+          access_end_date: new Date("2026-01-01"),
+        },
+      });
+
+      await prisma.loan.create({
+        data: {
+          user_id: userId,
+          book_id: bookId,
+          status: loan_status.RETURNED,
+          loan_date: new Date("2023-01-01"),
+          access_end_date: new Date("2023-01-10"),
+        },
+      });
+    });
+
+    it("should return only ACTIVE loans for the user", async () => {
+      const response = await request(app).get(`/api/loans/user/${userId}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.status).toBe("success");
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].status).toBe(loan_status.ACTIVE);
+      expect(response.body.data[0].book).toBeDefined();
+      expect(response.body.data[0].book.isbn).toBe("LOAN-123");
+    });
+
+    it("should return empty array for user with no loans", async () => {
+      const response = await request(app).get("/api/loans/user/99999");
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toEqual([]);
+    });
+  });
 });
