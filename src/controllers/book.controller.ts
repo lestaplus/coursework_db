@@ -52,6 +52,18 @@ class BookController {
       res.status(500).json({ status: "error", message: error.message });
     }
   }
+
+  async getPopular(req: Request, res: Response) {
+    try {
+      const limit = req.query.limit ? Number(req.query.limit) : 10;
+
+      const books = await bookService.getTopPopularBooks(limit);
+
+      res.json({ status: "success", data: books });
+    } catch (error: any) {
+      res.status(500).json({ status: "error", message: error.message });
+    }
+  }
 }
 
 export const bookController = new BookController();

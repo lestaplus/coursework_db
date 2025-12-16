@@ -93,6 +93,24 @@ export class BookService {
       },
     });
   }
+
+  async getTopPopularBooks(limit: number = 10) {
+    const result = await prisma.$queryRaw`
+      SELECT 
+        b.name as book_title,
+        CAST(COUNT(l.loan_id) AS INTEGER) as loan_count,
+        STRING_AGG(DISTINCT a.surname, ', ') as authors,
+        CAST(DENSE_RANK() OVER (ORDER BY COUNT(l.loan_id) DESC) AS INTEGER) as rank
+      FROM book b
+      JOIN loan l ON b.book_id = l.book_id
+      LEFT JOIN bookauthor ba ON b.book_id = ba.book_id
+      LEFT JOIN author a ON ba.author_id = a.author_id
+      GROUP BY b.book_id, b.name
+      ORDER BY rank ASC
+      LIMIT ${limit};
+    `;
+    return result;
+  }
 }
 
 export const bookService = new BookService();
