@@ -31,7 +31,7 @@ Backend-додаток для автоматизації роботи біблі
 
 ```bash
 # Клонування репозиторію
-git clone [https://github.com/lestaplus/coursework_db.git](https://github.com/lestaplus/coursework_db.git)
+git clone https://github.com/lestaplus/coursework_db.git
 cd coursework_db
 
 # Встановлення залежностей
